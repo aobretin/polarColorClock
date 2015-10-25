@@ -35,7 +35,7 @@ function PolarColorClock() {
 
 	//array to be used later to assciate Date() numbers with text months and week days
 	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-	var weekDays = ['Monday', 'Tuesday', 'Wednesday','Thursday', 'Friday', 'Saturday', 'Sunday'];
+	var weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday','Thursday', 'Friday', 'Saturday'];
 
 	//we check if we have overwritten settings if not leave the defaults
 	//by using the integrated arguments
@@ -59,6 +59,7 @@ function PolarColorClock() {
 	this.init = function() {
 		this.canvas.width = this.options.canvasWidth;
 		this.canvas.height = this.options.canvasHeight;
+
 		//this is to remove canvas scrollbars because canvas in rendered as inline element
 		this.canvas.style.display = 'block';
 
@@ -145,7 +146,7 @@ function PolarColorClock() {
 		weekDay = time.getDay();
 
 		for (i = 0; i < weekDays.length; i++) {
-			if (weekDay === i + 1) {
+			if (weekDay === i) {
 				weekDay = weekDays[i];
 			}
 		}
