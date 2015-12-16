@@ -10,6 +10,14 @@ function PolarColorClock() {
 		textSize: 85,
 		textFont: 'impact',
 		textColor: '#fff',
+		animatedBack: {
+			allow: true,
+			backgrounds: [
+				'morning.gif',
+				'day.gif',
+				'night.jpg'
+			]
+		},
 		customColor: false,
 		canvasWidth: document.body.offsetWidth,
 		canvasHeight: document.body.offsetHeight
@@ -32,6 +40,7 @@ function PolarColorClock() {
 	//we declare the needed empty for now variables
 	var i, time, timeFunction, textFunctions;
 	var year, months, day, weekDay;
+	var canvasBackground;
 
 	//array to be used later to assciate Date() numbers with text months and week days
 	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -62,9 +71,22 @@ function PolarColorClock() {
 
 		//this is to remove canvas scrollbars because canvas in rendered as inline element
 		this.canvas.style.display = 'block';
+		this.canvas.style.position = 'relative';
 
 		//the aniamte function that triggers once every 1000ms (1s)
 		this.animate();
+		if (this.options.animatedBack.allow) {
+			this.makeDummyBackground();
+		}
+	},
+	this.makeDummyBackground = function() {
+		canvasBackground = document.createElement('div');
+		canvasBackground.style.position = 'absolute';
+		canvasBackground.style.left = 0;
+		canvasBackground.style.right = 0;
+		canvasBackground.style.width = this.options.canvasWidth + 'px';
+		canvasBackground.style.height = this.options.canvasHeight + 'px';
+		document.body.insertBefore(canvasBackground, this.canvas);
 	},
 	//the draw function that writes on the canvas
 	this.draw = function() {
@@ -72,8 +94,12 @@ function PolarColorClock() {
 		timeFunction = [time.getSeconds(), time.getMinutes(), time.getHours()];
 		textFunctions = [this.showClock(), this.showDate(), this.showWeekDay()];
 
-		this.ctx.fillStyle = this.options.customColor ? this.options.customColor : this.generateColor();
-		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		if (!this.options.animatedBack.allow) {
+			this.ctx.fillStyle = this.options.customColor ? this.options.customColor : this.generateColor();
+			this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		} else {
+			this.toogleTimeBack();
+		}
 
 		this.ctx.textAlign = 'center';
 		this.ctx.fillStyle = this.options.textColor;
@@ -162,6 +188,20 @@ function PolarColorClock() {
 	this.generateContent = function() {
 		this.clearDraw();
 		this.draw();
+	},
+	this.toogleTimeBack = function() {
+		var establishTimeofDay;
+
+		if (this.hours >= 5 && this.hours < 11) {
+			establishTimeofDay = this.options.animatedBack.backgrounds[0];
+		} else if (this.hours >= 11 && this.hours < 19 ) {
+			establishTimeofDay = this.options.animatedBack.backgrounds[1];
+		} else if (this.hours >= 19 || this.hours < 5) {
+			establishTimeofDay = this.options.animatedBack.backgrounds[2];
+		}
+
+		canvasBackground.style.background = 'url(' + establishTimeofDay + ') no-repeat center center fixed';
+		canvasBackground.style.backgroundSize = 'cover';
 	}
 	//we initaliza the color clock
 	this.init();
